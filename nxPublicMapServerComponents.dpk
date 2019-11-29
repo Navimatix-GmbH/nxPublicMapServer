@@ -1,4 +1,4 @@
-package nxSharedMapServerComponents;
+package nxPublicMapServerComponents;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -25,6 +25,7 @@ package nxSharedMapServerComponents;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
+{$RUNONLY}
 {$IMPLICITBUILD ON}
 
 requires
