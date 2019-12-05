@@ -1,6 +1,6 @@
 unit uhttpmdsbase;
-// Hier alles reinpacken, was für die Kommunikation notwendig ist,
-// nicht in uroutecalculation.pas gehört und identisch auf dem Server vorhanden ist:
+// Hier alles reinpacken, was fï¿½r die Kommunikation notwendig ist,
+// nicht in uroutecalculation.pas gehï¿½rt und identisch auf dem Server vorhanden ist:
 // ugeocoding.pas
 // MapSourceBase.pas
 // (weitere?)
@@ -11,7 +11,7 @@ uses SysUtils, Classes
 
 {$IF Defined(ANDROID) or Defined(IOS)}
 , System.Generics.Collections
-{$ENDIF}
+{$IFEND}
 ;
 
 
@@ -48,7 +48,7 @@ type
   THTTPMDSList = TList<TObject>;
   {$ELSE}
   THTTPMDSList = TList;
-  {$ENDIF}
+  {$IFEND}
 
   THTTPMDSDefaultStream = TMemoryStream;
 
@@ -170,6 +170,12 @@ type
     function  get(afunction: string; aParams: THTTPConnectorParams; aStreamTo : TStream): Boolean; virtual; abstract;
     function  post(afunction: string; aParams: THTTPConnectorParams; aPostStream : TStream; aStreamTo : TStream): Boolean; virtual; abstract;
     function  createParams: THTTPConnectorParams; virtual;
+
+    property BaseURL: String read fBaseURL;
+    property UserName: String read fUserName;
+    property Password: String read fPassword;
+    property ReadTimeout: Integer read fReadTimeout;
+    property ConnectTimeout : Integer read fConnectTimeout;
   end;
 
   THTTPConnectorId = class (THTTPConnector)
@@ -224,7 +230,7 @@ begin
     DateSeparator:='.';
     TimeSeparator:=':';
     ListSeparator:=';';
-    CurrencyString:='€';
+    CurrencyString:='ï¿½';
     ShortDateFormat:='dd.MM.yyyy';
     LongDateFormat:='dddd, d. MMMM yyyy';
     TimeAMString:='';
@@ -245,7 +251,7 @@ begin
     ShortMonthNames[12]:='Dez';
     LongMonthNames[1]:='Januar';
     LongMonthNames[2]:='Februar';
-    LongMonthNames[3]:='März';
+    LongMonthNames[3]:='Mï¿½rz';
     LongMonthNames[4]:='April';
     LongMonthNames[5]:='Mai';
     LongMonthNames[6]:='Juni';
@@ -313,15 +319,12 @@ end;
 
 // clear fParams list
 procedure THTTPConnectorParams.Clear;
-var i: Integer; o : TObject;
+var i: Integer;
 begin
   for i := 0 to fParams.Count - 1 do
   begin
-    o := TObject(fParams[i]);
-    fParams[i] := nil;
-    FreeAndNil(o);
+    TObject(fParams[i]).Free;
   end;
-  fParams.Clear;
 end;
 
 // returns true if aParam exists in the fParams list
@@ -451,7 +454,7 @@ end;
 constructor THTTPConnector.Create(const aBaseURL, aUsername, aPasswd: String; aReadTimeout : Integer = 30000);
 begin
   inherited create(nil);
-  initialize( aBaseURL, aUsername, aPasswd, aReadTimeout); // THTTPConnector.initialize wird hier nicht ausgeführt, wenn aReadTimeout nicht angegeben?
+  initialize( aBaseURL, aUsername, aPasswd, aReadTimeout); // THTTPConnector.initialize wird hier nicht ausgefï¿½hrt, wenn aReadTimeout nicht angegeben?
 end;
 
 function THTTPConnector.createParams: THTTPConnectorParams;
@@ -834,7 +837,3 @@ finalization
 
 
 end.
-
-
-
-
