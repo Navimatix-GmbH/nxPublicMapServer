@@ -55,6 +55,10 @@ type
     fCPU                : String;
     fCPUCount           : Integer;
     fCPUSpeeds          : String;
+    fDBMaxTransactionId : Int64;
+    fDBSize             : Int64;
+    fDBFreeStorage      : Int64;
+    fDBTotalStorage     : Int64;
   protected
     procedure parseXMLState(aRootNode : IXMLNode); virtual;
   public
@@ -70,6 +74,10 @@ type
     property CPU                : String read fCPU;
     property CPUCount           : Integer read fCPUCount;
     property CPUSpeeds          : String read fCPUSpeeds;
+    property DBMaxTransactionId : Int64 read fDBMaxTransactionId;
+    property DBSize             : Int64 read fDBSize;
+    property DBFreeStorage      : Int64 read fDBFreeStorage;
+    property DBTotalStorage     : Int64 read fDBTotalStorage;
   end;
 
   THTTPMDSClientCapabilities = class
@@ -179,6 +187,9 @@ type
     function getMapsInfo(aMapsInfoList : THTTPMDSList; aStream : TStream)  : Boolean; overload;
     function getMapsInfo(aMapsInfoList : THTTPMDSList)  : boolean; overload;
 
+    function getMapIcon(aRotId, aRostId : Integer; aWidth, aHeight : Integer; aStream : TStream; aStrategy : THTTPMDSClientStretchStrategy = HTTPMDSMISS_STRETCH; aEmbeddedInfo : Boolean = false) : TStream; overload;
+    function getMapIcon(aRotId, aRostId : Integer; aWidth, aHeight : Integer; aStrategy : THTTPMDSClientStretchStrategy = HTTPMDSMISS_STRETCH; aEmbeddedInfo : Boolean = false) : TStream; overload;
+
   published
     property HTTP : THTTPConnector read fHTTP write fHTTP;
   end;
@@ -232,7 +243,7 @@ begin
     DateSeparator:='-';
     TimeSeparator:=':';
     ListSeparator:=';';
-    CurrencyString:='€';
+    CurrencyString:='ï¿½';
     //ShortDateFormat:='dd.MM.yyyy';
     ShortDateFormat:='yyyy-MM-dd';
     //LongDateFormat:='dddd, d. MMMM yyyy';
@@ -256,7 +267,7 @@ begin
     ShortMonthNames[12]:='Dez';
     LongMonthNames[1]:='Januar';
     LongMonthNames[2]:='Februar';
-    LongMonthNames[3]:='März';
+    LongMonthNames[3]:='Mï¿½rz';
     LongMonthNames[4]:='April';
     LongMonthNames[5]:='Mai';
     LongMonthNames[6]:='Juni';
@@ -469,7 +480,27 @@ begin
       chealthindex := StrToIntDef(cNode.Text, -1);
       fHealthIndex := chealthindex;
     end;
-
+    // DB-State...
+    cNode := aRootNode.ChildNodes.FindNode('dbmaxtransactionid');
+    if cNode <> nil then
+    begin
+      fDBMaxTransactionId := StrToInt64Def(cNode.Text, -1);
+    end;
+    cNode := aRootNode.ChildNodes.FindNode('dballsize');
+    if cNode <> nil then
+    begin
+      fDBSize := StrToInt64Def(cNode.Text, -1);
+    end;
+    cNode := aRootNode.ChildNodes.FindNode('dbfreestoragesize');
+    if cNode <> nil then
+    begin
+      fDBFreeStorage := StrToInt64Def(cNode.Text, -1);
+    end;
+    cNode := aRootNode.ChildNodes.FindNode('dbtotalstoragesize');
+    if cNode <> nil then
+    begin
+      fDBTotalStorage := StrToInt64Def(cNode.Text, -1);
+    end;
     cNode := aRootNode.ChildNodes.FindNode('memused');
     if cNode <> nil then
     begin
@@ -1254,6 +1285,68 @@ begin
     result := getMapsInfo(aMapsInfoList, ms);
   finally
     FreeAndNil(ms);
+  end;
+end;
+
+function THTTPMDSClient.getMapIcon(aRotId, aRostId : Integer; aWidth, aHeight : Integer; aStream : TStream; aStrategy : THTTPMDSClientStretchStrategy = HTTPMDSMISS_STRETCH; aEmbeddedInfo : Boolean = false) : TStream;
+var params : THTTPConnectorParams;
+    dtl, cStrategy : String;
+begin
+  if fHTTP = nil then
+  begin
+    raise EHTTPError.Create('can not perform action if http connector ist not assigned!');
+  end;
+
+  case aStrategy of
+    HTTPMDSMISS_STRETCH: cStrategy := 'stretch';
+    HTTPMDSMISS_CENTER: cStrategy := 'center';
+    HTTPMDSMISS_FIT: cStrategy := 'fit';
+  else
+    cStrategy := '';
+  end;
+
+  params := fHTTP.createParams;
+  try
+    // Parameter...
+    params.addInteger('rot', aRotId);
+    params.addInteger('rost', aRostId);
+    params.addInteger('width', aWidth);
+    params.addInteger('height', aHeight);
+    params.addString('strategy', cStrategy);
+    params.addBoolean('embeddedinfo', aEmbeddedInfo);
+    if fHTTP.get('/mapicon', params, aStream) then
+    begin
+      try
+        result := aStream;
+        try
+          aStream.Position  := 0;
+        except
+          on e : exception do
+          begin
+            FreeAndNil(result);
+            raise e;
+          end;
+        end;
+      finally
+
+      end;
+    end else
+    begin
+      raise EHTTPError.Create('get for "/mapsinfo" simply failed.');
+    end;
+  finally
+    FreeAndNil(params);
+  end;
+end;
+
+function THTTPMDSClient.getMapIcon(aRotId, aRostId : Integer; aWidth, aHeight : Integer; aStrategy : THTTPMDSClientStretchStrategy = HTTPMDSMISS_STRETCH; aEmbeddedInfo : Boolean = false) : TStream;
+var ms : THTTPMDSDefaultStream;
+begin
+  ms  := THTTPMDSDefaultStream.Create;
+  try
+    result := getMapIcon(aRotId, aRostId, aWidth, aHeight, ms, aStrategy, aEmbeddedInfo);
+  finally
+    //FreeAndNil(ms);
   end;
 end;
 

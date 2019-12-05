@@ -2,8 +2,8 @@ unit uhttpmdsmapelement;
 // als erstes implementieren: TNxMapRoadElement und TNaMROServicePoint
 interface
 
-uses types, classes, SysUtils, XMLIntf, XMLDoc, TypInfo, System.Generics.Collections,
-  uhttpmdsbase, uhttpmdsmapelementbase, uhttpmdsgeocoding, IdThreadSafe;
+uses types, classes, SysUtils, XMLIntf, XMLDoc, TypInfo,
+  uhttpmdsbase, uhttpmdsmapelementbase, uhttpmdsgeocoding;
 
 const
   // Unterstützte Funktionen
@@ -13,25 +13,18 @@ const
 
 type
 
-  {$IF Defined(ANDROID) or Defined(IOS)}
-  TFMThreadSafeList = TIdThreadSafeList<TObject>;
-  TFMList = TList<TObject>;
-  {$ELSE}
-  TFMThreadSafeList = TIdThreadSafeList;
-  TFMList = TList;
-  {$ENDIF}
-
   TMapElementType = (
     T_UNDEFINED,
     T_ROADELEMENT, T_ROADELEMENTJUNCTION, T_INTERSECTION,
     T_STREET, T_STREETCOLLECTION, T_ADMINISTRATIVEINFO, T_SERVICEPOINT,
     T_AREA, T_RAILWAYELEMENT, T_BASICLINE, T_PARCEL,
     T_ROBTNAME,
-    T_ROTROSTMETAINFO );
+    T_ROTROSTMETAINFO  );
 
   TGeometryType = (
     T_GEOMETRYUNDEFINED, T_GEOMETRYPOINT,
-    T_GEOMETRYLINE, T_GEOMETRYAREA );
+    T_GEOMETRYLINE, T_GEOMETRYAREA
+  );
 
   TAdminOrder =
     (NaMMPAO_COUNTRY, NaMMPAO_COUNTRYPART,
@@ -70,7 +63,6 @@ type
   end;
 
   TGeometry = class
-  private
     fType        : TGeometryType; // Point/ Line / Area
     fPositions   : THTTPMDSList;
   protected
@@ -79,7 +71,6 @@ type
     constructor Create; virtual;
     destructor Destroy; override;
   public
-
   end;
 
   TNxMapPoint = class(TGeometry)
@@ -93,25 +84,24 @@ type
       procedure loadfromxml(aposnode: IXMLNode);
       class function createfromxml(aposnode: IXMLNode): TNxMapPoint;
     public
-      property  Longitude  : double read  fLongitude;
-      property  Latitude  : double read  fLatitude;
+
   end;
 
   TNxMapLine = class(TGeometry)
     private
-      fpositions: THTTPMDSList; // of TNxMapPoint
+      fpositions: TList; // of TNxMapPoint
     public
       constructor Create; virtual;
       destructor Destroy; override;
 
-      property Positions: THTTPMDSList read fpositions write fpositions;
+      property Positions: TList read fpositions write fpositions;
       procedure loadfromxml(aGeometrynode: IXMLNode);
       class function createfromxml(aLinenode: IXMLNode): TNxMapLine;
   end;
 
   TNxMapArea=  class(TGeometry)
     private
-      fpositions: THTTPMDSList; // of TNxMapPoint
+      fpositions: TList; // of TNxMapPoint
     public
       constructor Create; virtual;
       destructor Destroy; override;
@@ -267,25 +257,18 @@ type
   public
     constructor Create(CopyStreamOnLoad : Boolean = false); override;
     destructor Destroy; override;
-
-    property FunctionalClass    : Byte read fFunctionalClass;
-    property MiddlePointID      : Cardinal read fMiddlePointID;
-    property BelongsToAdminID   : Cardinal read fBelongsToAdminID;
-    property OfficialNameID     : Cardinal read fOfficialNameID;
-    property OfficialName       : String read fOfficialName;
-    property MiddlePoint        : TNxMapPoint read fMiddlePoint;
   end;
 
   TNnxMapElementList = class(THTTPConnectorResult)
   private
-    fMapElements: TFMList;
+    fMapElements: TList;
     fmapcid     : Integer;
     fmapid      : String;
   public
     constructor Create(CopyStreamOnLoad : Boolean = false); override;
     destructor Destroy; override;
 
-    property MapElements: TFMList read fMapElements write fMapElements;
+    property MapElements: TList read fMapElements write fMapElements;
     class function createFromStream(aFromStream : TStream): TNnxMapElementList;
   end;
 
@@ -298,7 +281,7 @@ type
 
     // Für jedes Kommando (Request an Mapserver) existiert hier eine eigene function
     function getMapElement(amapcontextID: Integer; arot, aro, arost: Cardinal): TNnxMapElement;
-    function findNearestMapElements(aLong, aLat, aRadius: double): TNnxMapElementList;
+    function findNearestMapElements(arot, arost: Cardinal; aLong, aLat: double; aRadius: double): TNnxMapElementList;
     function rangequerymapelements(amapcid: integer; arot, arost: Cardinal; ageoleft, ageotop, ageoright, ageobottom: double): TNnxMapElementList;
     // Reply: mapobjects/element jeweils mit typedata, geometry
     // Test- URL: http://npc049:8086/rangequerymapelements?rot=20&rost=1&geoleft=11.07&geotop=50.700001&georight=11.070001&geobottom=50.7&mapcid=0
@@ -474,7 +457,7 @@ end;
 constructor TNxMapLine.Create;
 begin
   inherited Create;
-  fpositions:= THTTPMDSList.Create;
+  fpositions:= TList.Create;
   fType:= T_GEOMETRYLINE;
 end;
 
@@ -943,8 +926,7 @@ begin
   end;
 end;
 
-function THTTPMDSMapElementAccess.findNearestMapElements(aLong, aLat, aRadius: double): TNnxMapElementList;
-// Ergebnis: Liste von MapElements
+function THTTPMDSMapElementAccess.findNearestMapElements(arot, arost: Cardinal; aLong, aLat: double; aRadius: double): TNnxMapElementList;
 var params : THTTPConnectorParams;
     ms : TStream;
     meType: TMapElementType;
@@ -955,18 +937,19 @@ begin
     raise EHTTPError.Create('can not perform action if http connector ist not assigned!');
   end;
   params := fHTTP.createParams;
+  params.addInteger('rot',arot);
+  params.addInteger('rost',arost);
   params.addFloat('longitude', aLong);
   params.addFloat('latitude',aLat);
   params.addFloat('radius', aRadius);
-  ms:= TMemoryStream.Create;
   params.addString('outfmt', 'xml');
+  ms:= TMemoryStream.Create;
   try
     ms.Position := 0;
     try
        fHTTP.get(WMCMD_FINDNEARESTMAPELEMENTS, params, ms); // schreibt das Ergebnis in den Strean ms
-      // Test- URL: http://npc049:8086/findnearestmapelements?longitude=11.57133500&latitude=50.91971700&radius=0.003
-      // Stream auswerten
-      TNnxMapElementList.createFromStream(ms); // im Stream sind mehrere MapElements enthalten
+      // Test- URL: http://maps.navimatix.net:8086/findnearestmapelements?rot=20&rost=1&longitude=11.60000000&latitude=50.93000000&radius=0.00300000&outfmt=xml
+      result:= TNnxMapElementList.createFromStream(ms); // im Stream sind mehrere MapElements enthalten
     except
 
     end;
@@ -999,8 +982,8 @@ begin
   params.addFloat('georight' , ageoright);
   params.addFloat('geobottom', ageobottom);
   params.addInteger('mapcid' , amapcid);
-  ms:= TMemoryStream.Create;
   params.addString('outfmt', 'xml');
+  ms:= TMemoryStream.Create;
   try
     ms.Position := 0;
     try
@@ -1012,16 +995,10 @@ begin
 
     end;
   finally
-    if result <> nil then
-    begin
-      if result.CopyStream then
+    if result.CopyStream then
       begin
         FreeAndNil(ms);
       end;
-    end else
-    begin
-      FreeAndNil(ms);
-    end;
    end;
  end;
 
@@ -1101,7 +1078,7 @@ var cXMLdoc  :IXMLDocument;
 begin
   cXMLDoc := NewXMLDocument('1.0');
   cXMLdoc.LoadFromStream(aFromStream);
-  // cXMLdoc.SaveToFile('D:\temp\mapelement.xml');   // Nur für debug
+  cXMLdoc.SaveToFile('D:\temp\mapelement.xml');   // Nur für debug
 
   cRootNode := cXMLDoc.ChildNodes.FindNode('namhttpservice');
   if cRootNode = nil then
@@ -1215,7 +1192,7 @@ end;
 constructor TNnxMapElementList.Create(CopyStreamOnLoad : Boolean = false);
 begin
   inherited Create(CopyStreamOnLoad);
-  fMapElements:= TFMList.Create;
+  fMapElements:= TList.Create;
 end;
 
 destructor TNnxMapElementList.Destroy;
@@ -1236,7 +1213,7 @@ var cXMLdoc  :IXMLDocument;
 begin
   cXMLDoc := NewXMLDocument('1.0');
   cXMLdoc.LoadFromStream(aFromStream);
-  //cXMLdoc.SaveToFile('D:\temp\mapelements.xml');
+  cXMLdoc.SaveToFile('D:\temp\mapelements.xml');
   cRootNode := cXMLDoc.ChildNodes.FindNode('namhttpservice');
 
   if cRootNode = nil then
@@ -1244,24 +1221,20 @@ begin
     errStr:= 'node "namhttpservice" (root) not found';
     raise EParseError.Create(errStr, aFromStream);
   end;
-
-  cMapObjectsNode := cRootNode.ChildNodes.FindNode('mapobjects');
-  if cMapObjectsNode = nil then
-  begin
-    errStr:= 'node "mapobjects" not found';
-    raise EParseError.Create(errStr, aFromStream);
-  end;
-
   result := TNnxMapElementList.Create;
-  if cMapObjectsNode.HasAttribute('mapcid') then result.fmapcid:= cMapObjectsNode.Attributes['mapcid'];
-  if cMapObjectsNode.HasAttribute('mapid')  then result.fmapid := cMapObjectsNode.Attributes['mapid'];
-  for i:= 0 to cMapObjectsNode.ChildNodes.Count - 1 do
-  begin
-    aktNode:= cMapObjectsNode.ChildNodes.get(i);
-    cme    := TNnxMapElement.createFromXML(aktNode);
-    cme.fMapID := result.fmapid;
-    cme.fMapCID:= result.fmapcid;
-    result.MapElements.Add(Pointer(TNnxMapElement(cme)));
+  cMapObjectsNode := cRootNode.ChildNodes.FindNode('mapobjects');
+  if cMapObjectsNode <> nil
+  then begin // Stream enthält MapObjects
+    if cMapObjectsNode.HasAttribute('mapcid') then result.fmapcid:= cMapObjectsNode.Attributes['mapcid'];
+    if cMapObjectsNode.HasAttribute('mapid')  then result.fmapid := cMapObjectsNode.Attributes['mapid'];
+    for i:= 0 to cMapObjectsNode.ChildNodes.Count - 1 do
+    begin
+      aktNode:= cMapObjectsNode.ChildNodes.get(i);
+      cme    := TNnxMapElement.createFromXML(aktNode);
+      cme.fMapID := result.fmapid;
+      cme.fMapCID:= result.fmapcid;
+      result.MapElements.Add(Pointer(TNnxMapElement(cme)));
+    end;
   end;
 end;
 
@@ -1269,4 +1242,3 @@ initialization
   initXMLSchemaDataTypesV2FormatSettings(MapServerFS);
 
 end.
-

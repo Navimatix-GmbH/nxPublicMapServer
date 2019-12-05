@@ -431,13 +431,11 @@ procedure TGeoCoderAddress.loadFromStream(aFromStream : TStream);
 var cXMLdoc   : IXMLDocument;
     cRootNode,
     cNode     : IXMLNode;
-    cResultText : String;
 begin
   cXMLDoc := XMLDoc.NewXMLDocument('1.0');
   try
     try
       cXMLDoc.LoadFromStream(aFromStream);
-      cResultText := cXMLdoc.XML.Text;
     except
       on e : exception do
       begin
@@ -485,6 +483,8 @@ begin
 end;
 
 procedure TGeoCoderAddress.parseXMLAddress(aBaseNode : IXMLNode);
+var
+  clon, clat : string;
 begin
   invalidateAddress;
 
@@ -919,6 +919,7 @@ end;
 
 function TGeoCoderHTTP.getGeoPositionByAddress(const aAddress: TGeoCoderAddress; aStream : TStream): TGeoCoderPosition;
 var params  : THTTPConnectorParams;
+    dtl     : String;
 begin
   if fHTTP = nil then
   begin
@@ -980,6 +981,7 @@ end;
 
 function TGeoCoderHTTP.getAddressByGeoPosition(const aPosition: TGeoCoderPosition; aStream : TStream): TGeoCoderAddress;
 var params  : THTTPConnectorParams;
+    dtl     : String;
 begin
   if fHTTP = nil then
   begin
@@ -1035,6 +1037,7 @@ end;
 
 function TGeoCoderHTTP.getAddressSet (const aSearchText: String; const aMapCID : Integer; aToList: THTTPMDSList; aStream: TStream): Boolean;
 var params  : THTTPConnectorParams;
+    dtl     : String;
 begin
   result  := false;
   if fHTTP = nil then
@@ -1174,6 +1177,7 @@ end;
 
 function TGeoCoderHTTP.getAddressData (const aAddress: TGeoCoderAddress; aStream : TStream) : TGeoCoderAddressEx;
 var params  : THTTPConnectorParams;
+    dtl     : String;
 begin
   if fHTTP = nil then
   begin
@@ -1314,6 +1318,7 @@ end;
 
 function TGeoCoderHTTP.identifyAddressSet (const aAddress: TGeoCoderAddress; aToList: THTTPMDSList; aStream : TStream): Boolean;
 var params  : THTTPConnectorParams;
+    dtl     : String;
 begin
   result  := false;
   if fHTTP = nil then
@@ -1469,8 +1474,3 @@ initialization
 finalization
 
 end.
-
-
-
-
-
