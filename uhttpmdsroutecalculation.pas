@@ -122,7 +122,7 @@ type
     fGeometry: THTTPMDSList;
     fAttributes: THTTPMDSList;
   protected
-    function GetToString: String;
+    function GetAsString: String;
 
     function getPositionCount : Integer;
     function getPosition(index : Integer) : TGeoCoderPosition;
@@ -148,7 +148,7 @@ type
     property OfficialName: string read fOfficialName write fOfficialName;
     property RouteNumberID: Cardinal read fRouteNumberID write fRouteNumberID;
     property RouteNumber: string read fRouteNumber write fRouteNumber;
-    property AsString: string read GetToString;
+    property AsString: string read GetAsString;
 
     property PositionCount : Integer read getPositionCount;
     property Positions[index : Integer] : TGeoCoderPosition read getPosition;
@@ -163,7 +163,7 @@ type
     fElementDirection: Boolean;
     fElement: TRoadElement;
   protected
-    function GetToString: String;
+    function GetAsString: String;
   public
     constructor Create; reintroduce; virtual;
     destructor Destroy; override;
@@ -171,12 +171,12 @@ type
     property Id: Cardinal read fElementId write fElementId;
     property Direction: Boolean read fElementDirection write fElementDirection;
     property Element: TRoadElement read fElement write fElement;
-    property AsString: String read GetToString;
+    property AsString: String read GetAsString;
   end;
 
   TTurn= class
   protected
-    function GetToString: String;
+    function GetAsString: String;
   private
     fduration: Single;
     fturntype: TTurnType;
@@ -198,7 +198,7 @@ type
     property Pos: TGeoCoderPosition read fpos;
     property Command: String read fcommand;
     property Description: string read fdescription;
-    property ToString: String read GetToString;
+    property AsString: String read GetAsString;
   end;
 
   TRouteGuidance= class
@@ -233,7 +233,7 @@ type
 
     function getRouteItem(index: Integer): TRouteItem;
     function getRouteItemsCount: Integer;
-    function GetToString: String;
+    function GetAsString: String;
     function getPositionsCount: Integer;
     function GetPosition(index: Integer): TGeoCoderPosition;
     function getRouteTurnsCount: Integer;
@@ -262,7 +262,7 @@ type
 
     property RouteItem[Index:Integer]: TRouteItem read getRouteItem;
     property RouteItemCount: Integer read getRouteItemsCount;
-    property AsString: String read GetToString;
+    property AsString: String read GetAsString;
 
     property PositionCount: Integer read getPositionsCount;
     property Positions[Index:Integer]: TGeoCoderPosition read GetPosition;
@@ -361,7 +361,7 @@ begin
   inherited Destroy;
 end;
 
-function TRouteCalculatorPosition.getToString;
+function TRouteCalculatorPosition.getAsString;
 var sl : TStringList;
 begin
   sl  := TStringList.Create;
@@ -878,7 +878,7 @@ begin
   inherited Destroy;
 end;
 
-function TRouteItem.GetToString;
+function TRouteItem.GetAsString;
 begin
    Result:= 'Id= '+  IntToStr(fElementId)+  #13 +
             'Direction= ' + BoolToStr(Direction, true) + #13 +
@@ -904,7 +904,7 @@ begin
   inherited Destroy;
 end;
 
-function TRoadElement.GetToString;
+function TRoadElement.GetAsString;
 begin
    Result:= 'RoadElement:'+#13+ //ToDo: Bei Bedarf die fehlenden GetToString, die hier inline programmiert sind,
       // implementieren für: ElementType, FunctionalRoadClass, FormOfWay, BlockedPassage, MainDirectionFlow, ConstructionState
@@ -990,7 +990,7 @@ begin
   inherited Destroy;
 end;
 
-function TTurn.GetToString: String;
+function TTurn.GetAsString: String;
 begin
   result:='Turn:'+ #13 +
      'duration ' + FloatToStr(fduration)+ #13 +
@@ -1235,7 +1235,7 @@ begin
    Result:= fRoutePositions[index];
 end;
 
-function TRouteCalculatorRoute.getToString: String;
+function TRouteCalculatorRoute.getAsString: String;
 begin
    Result:= ' Route: ' + #13 +
       'MapCID= '+  IntToStr(fMapCID)+ #13 +

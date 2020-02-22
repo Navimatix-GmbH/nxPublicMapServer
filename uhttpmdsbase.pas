@@ -1,4 +1,4 @@
-unit uhttpmdsbase;
+﻿unit uhttpmdsbase;
 // Hier alles reinpacken, was f�r die Kommunikation notwendig ist,
 // nicht in uroutecalculation.pas geh�rt und identisch auf dem Server vorhanden ist:
 // ugeocoding.pas
@@ -11,7 +11,7 @@ uses SysUtils, Classes
 
 {$IF Defined(ANDROID) or Defined(IOS)}
 , System.Generics.Collections
-{$IFEND}
+{$ENDIF}
 ;
 
 

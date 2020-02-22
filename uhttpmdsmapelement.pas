@@ -89,19 +89,19 @@ type
 
   TNxMapLine = class(TGeometry)
     private
-      fpositions: TList; // of TNxMapPoint
+      fpositions: THTTPMDSList; // of TNxMapPoint
     public
-      constructor Create; virtual;
+      constructor Create; override;
       destructor Destroy; override;
 
-      property Positions: TList read fpositions write fpositions;
+      property Positions: THTTPMDSList read fpositions write fpositions;
       procedure loadfromxml(aGeometrynode: IXMLNode);
       class function createfromxml(aLinenode: IXMLNode): TNxMapLine;
   end;
 
   TNxMapArea=  class(TGeometry)
     private
-      fpositions: TList; // of TNxMapPoint
+      fpositions: THTTPMDSList; // of TNxMapPoint
     public
       constructor Create; virtual;
       destructor Destroy; override;
@@ -457,7 +457,7 @@ end;
 constructor TNxMapLine.Create;
 begin
   inherited Create;
-  fpositions:= TList.Create;
+  fpositions:= THTTPMDSList.Create;
   fType:= T_GEOMETRYLINE;
 end;
 
