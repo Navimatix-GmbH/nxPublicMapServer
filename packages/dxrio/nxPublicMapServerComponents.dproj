@@ -82,15 +82,18 @@
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <GenDll>true</GenDll>
         <GenPackage>true</GenPackage>
-        <DCC_DcuOutput>..\lib\dcu\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_DcuOutput>..\..\..\lib\dcu\dxrio\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
         <DCC_S>false</DCC_S>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
-        <DCC_DcpOutput>..\lib\dcp\$(Platform)\$(Config)</DCC_DcpOutput>
-        <DCC_BplOutput>..\lib\bpl\$(Platform)\$(Config)</DCC_BplOutput>
+        <DCC_DcpOutput>..\..\..\lib\dcp\dxrio\$(Platform)\$(Config)</DCC_DcpOutput>
+        <DCC_BplOutput>..\..\..\lib\bpl\dxrio\$(Platform)\$(Config)</DCC_BplOutput>
+        <DCC_BpiOutput>..\..\..\lib\dcu\dxrio\$(Platform)\$(Config)</DCC_BpiOutput>
+        <DCC_HppOutput>..\..\..\lib\dcu\dxrio\$(Platform)\$(Config)</DCC_HppOutput>
+        <DCC_ObjOutput>..\..\..\lib\dcu\dxrio\$(Platform)\$(Config)</DCC_ObjOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
@@ -195,13 +198,13 @@
         <DCCReference Include="IndySystem.dcp"/>
         <DCCReference Include="IndyProtocols.dcp"/>
         <DCCReference Include="IndyCore.dcp"/>
-        <DCCReference Include="uhttpmdsadmin.pas"/>
-        <DCCReference Include="uhttpmdsbase.pas"/>
-        <DCCReference Include="uhttpmdsclient.pas"/>
-        <DCCReference Include="uhttpmdsgeocoding.pas"/>
-        <DCCReference Include="uhttpmdsmapelement.pas"/>
-        <DCCReference Include="uhttpmdsmapelementbase.pas"/>
-        <DCCReference Include="uhttpmdsroutecalculation.pas"/>
+        <DCCReference Include="..\..\uhttpmdsadmin.pas"/>
+        <DCCReference Include="..\..\uhttpmdsbase.pas"/>
+        <DCCReference Include="..\..\uhttpmdsclient.pas"/>
+        <DCCReference Include="..\..\uhttpmdsgeocoding.pas"/>
+        <DCCReference Include="..\..\uhttpmdsmapelement.pas"/>
+        <DCCReference Include="..\..\uhttpmdsmapelementbase.pas"/>
+        <DCCReference Include="..\..\uhttpmdsroutecalculation.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -250,7 +253,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\nxPublicMapServerComponents.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\lib\bpl\Win32\Debug\nxPublicMapServerComponents.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>nxPublicMapServerComponents.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
