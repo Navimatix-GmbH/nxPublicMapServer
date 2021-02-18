@@ -82,18 +82,18 @@
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <GenDll>true</GenDll>
         <GenPackage>true</GenPackage>
-        <DCC_DcuOutput>..\..\..\lib\dcu\dxrio\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_DcuOutput>..\..\..\lib\dxrio\dcu\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
         <DCC_S>false</DCC_S>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
-        <DCC_DcpOutput>..\..\..\lib\dcp\dxrio\$(Platform)\$(Config)</DCC_DcpOutput>
-        <DCC_BplOutput>..\..\..\lib\bpl\dxrio\$(Platform)\$(Config)</DCC_BplOutput>
-        <DCC_BpiOutput>..\..\..\lib\dcu\dxrio\$(Platform)\$(Config)</DCC_BpiOutput>
-        <DCC_HppOutput>..\..\..\lib\dcu\dxrio\$(Platform)\$(Config)</DCC_HppOutput>
-        <DCC_ObjOutput>..\..\..\lib\dcu\dxrio\$(Platform)\$(Config)</DCC_ObjOutput>
+        <DCC_DcpOutput>..\..\..\lib\dxrio\dcp\$(Platform)\$(Config)</DCC_DcpOutput>
+        <DCC_BplOutput>..\..\..\lib\dxrio\bpl\$(Platform)\$(Config)</DCC_BplOutput>
+        <DCC_BpiOutput>..\..\..\lib\dxrio\dcu\$(Platform)\$(Config)</DCC_BpiOutput>
+        <DCC_HppOutput>..\..\..\lib\dxrio\dcu\$(Platform)\$(Config)</DCC_HppOutput>
+        <DCC_ObjOutput>..\..\..\lib\dxrio\dcu\$(Platform)\$(Config)</DCC_ObjOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
@@ -144,9 +144,9 @@
         <DCC_UsePackage>rtl;xmlrtl;IndySystem;IndyProtocols;IndyCore;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_DcpOutput>..\lib\dcp\$(Platform)\$(Config)</DCC_DcpOutput>
-        <DCC_DcuOutput>..\lib\dcu\$(Platform)\$(Config)</DCC_DcuOutput>
-        <DCC_BplOutput>..\lib\bpl\$(Platform)\$(Config)</DCC_BplOutput>
+        
+        
+        
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
@@ -155,9 +155,9 @@
         <DCC_CBuilderOutput>None</DCC_CBuilderOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <DCC_DcpOutput>..\lib\dcp\$(Platform)\$(Config)</DCC_DcpOutput>
-        <DCC_DcuOutput>..\lib\dcu\$(Platform)\$(Config)</DCC_DcuOutput>
-        <DCC_BplOutput>..\lib\bpl\$(Platform)\$(Config)</DCC_BplOutput>
+        
+        
+        
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
