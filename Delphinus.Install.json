@@ -1,0 +1,40 @@
+ {
+	 "search_pathes": 
+	[
+		{
+			"pathes": ".",
+			"platforms": "Win32;Win64"
+		}
+	],	 
+	"browsing_pathes": 
+	[
+		{
+			"pathes": ".",
+			"platforms": "Win32;Win64"
+		}
+	],
+	
+	"source_folders":
+	[
+		{
+			"folder": ".",
+			"filter": "*;*.*",
+			"recursive": true
+		}
+	],
+	"projects":
+	[
+		{
+			"project": "packages\\dxberlin\\nxPublicMapServerComponents240.dproj",
+      			"compiler": 31
+		},
+    		{
+			"project": "packages\\dxrio\\nxPublicMapServerComponents260.dproj",
+      			"compiler": 33
+		},
+    		{
+			"project": "packages\\dxsydney\\nxPublicMapServerComponents270.dproj",
+      			"compiler": 34
+		}
+	]
+}

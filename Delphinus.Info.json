@@ -1,0 +1,18 @@
+{
+    "id": "{aa8b3ef1-7b58-45f5-87f0-ef80adfdb31a}",
+    "name": "nxPublicMapServer",
+    "picture": "logo.png",
+    "licenses":
+    [
+        {
+          "type": "MIT",
+          "file": "LICENSE"
+        }
+    ],
+    "platforms": "Win32;Win64",
+    "package_compiler_min": 26,
+    "package_compiler_max": 34,
+    "compiler_min": 26,
+    "compiler_max": 34,
+    "first_version": "1.0.0.0"
+}
